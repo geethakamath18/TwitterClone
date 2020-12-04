@@ -26,6 +26,8 @@ open Akka.FSharp
 open System.Diagnostics
 // open BackendData
 
+let mutable time =  System.Diagnostics.Stopwatch() 
+
 module TweeterServer = 
 
 
@@ -59,9 +61,8 @@ module TweeterServer =
                 printfn ""
                 printfn "Users starts Tweeting"
 
-                for z in clientList do
-                    numTweets <- numberOfFollowers.[z] 
-                    while(y<numTweets) do
+                while(y<5) do
+                    for z in clientList do
                         clients.[z]<! TweetNow
                         let mutable n = clientTweet.[z];
                         // clientTweet.[z]<-n+1;
@@ -118,10 +119,10 @@ module TweeterServer =
 
     let main (args:string []) =
 
-        let mutable demoType = args.[3]
+        let mutable demoType = args.[2]
         numClients<-(int) args.[1] // Setting the value of number of nodes
         // printfn "%d" numFollowers
-        numTweets<- (int)  args.[2] // Setting the value value for the topology
+        // numTweets<- (int)  args.[2] // Setting the value value for the topology
         for i in [0 .. numClients-1] do
             clientList.Add(i)
         wait()
@@ -129,12 +130,16 @@ module TweeterServer =
         server.Add(twitterRef)
         match demoType with 
         |  "DemoOne" -> 
+            
             demoOne(numClients)
             wait()
         | "DemoTwo" ->
             printvalues <- false
             printf "%A" clientList.Count
+            time <- Stopwatch.StartNew()
             demoTwo(numClients)
+            time.Stop()
+            printfn "Total time taken is : %A" time.Elapsed.TotalMilliseconds
             wait()
             wait()
         | _ -> 
@@ -148,5 +153,5 @@ module TweeterServer =
      
     let args = fsi.CommandLineArgs 
     match args.Length with //Checking number of parameters
-        | 4 -> main args    
+        | 3 -> main args    
         | _ ->  failwith "You need to pass two parameters!"

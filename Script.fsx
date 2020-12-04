@@ -14,6 +14,8 @@ open System.Collections.Generic
 open Methods.Methods
 open Variables.Variables
 
+let mutable time =  System.Diagnostics.Stopwatch() 
+
 module Script =
     let wait() = 
         System.Threading.Thread.Sleep(1000);
@@ -101,14 +103,14 @@ module Script =
     let demoTwo(args) = 
 
         createuser(args)
-        waitBitLonger()
+        wait()
         createFollowers()
-        waitBitLonger()
+        wait()
         startTweet()
-        waitBitLonger()
+        wait()
         startRetweet()
-        waitBitLonger()
+        wait()
         startMentioning()
-        waitBitLonger()
+        wait()
         deleteUser()
         startMentioning()
